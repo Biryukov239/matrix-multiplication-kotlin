@@ -8,7 +8,7 @@ import org.example.multiplication.Kernels.getLocalMemKernel
 import org.example.multiplication.Kernels.getNaiveKernel
 import org.example.multiplication.Kernels.getWPTOptKernel
 
-class GPUMultiplier @JvmOverloads constructor(
+class GPUMultiplier (
     device: Device?,
     firstMat: FloatArray?,
     secondMat: FloatArray?,
