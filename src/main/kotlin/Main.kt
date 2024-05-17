@@ -6,6 +6,7 @@ import org.example.multiplication.Multiplier
 import kotlin.math.abs
 import com.xenomachina.argparser.ArgParser
 
+
 class MyArgs(parser: ArgParser) {
     val m by parser.storing("-m", help = "Height of the first matrix") { toInt() }
     val k by parser.storing("-k", help = "Weight of the first matrix") { toInt() }
