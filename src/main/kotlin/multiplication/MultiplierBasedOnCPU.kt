@@ -1,13 +1,13 @@
 package org.example.multiplication
 
 class MultiplierBasedOnCPU(
-    override var firstMatrix: FloatArray,
-    override var secondMatrix: FloatArray,
+    override val firstMatrix: FloatArray,
+    override val secondMatrix: FloatArray,
     private val firstRowCount: Int,
     firstColumnCount: Int,
     private val secondColumnCount: Int
 ) :
-    Multiplier() {
+    Multiplier {
 
     override var resultMatrix: FloatArray = FloatArray(firstRowCount * secondColumnCount)
 

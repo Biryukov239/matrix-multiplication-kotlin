@@ -7,90 +7,48 @@ import com.aparapi.device.OpenCLDevice
 import org.example.multiplication.Kernels.getLocalMemProgram
 import org.example.multiplication.Kernels.getNaiveProgram
 import org.example.multiplication.Kernels.getWPTOptProgram
+import org.example.multiplication.MultiplierBasedOnGPU.Companion.getDefaultDevice
 
 data class Program(val kernel: Kernel, val range: Range)
 
 class MultiplierBasedOnGPU(
     device: Device?,
-    firstMatrix: FloatArray,
-    secondMatrix: FloatArray,
+    override var firstMatrix: FloatArray,
+    override var secondMatrix: FloatArray,
     firstRowCount: Int,
     firstColumnCount: Int,
     secondColumnCount: Int,
-    kernelType: KernelType? = KernelType.NAIVE
+    kernelType: KernelType = KernelType.NAIVE,
 ) :
-    Multiplier() {
-    override var firstMatrix: FloatArray
-    override var secondMatrix: FloatArray
+    Multiplier {
     override var resultMatrix: FloatArray
     private var program: Program
 
     private val device: Device
 
     companion object {
-        private fun getDefaultDevice(): Device? {
-            if (OpenCLDevice.listDevices(Device.TYPE.GPU).isNotEmpty()) {
-                return OpenCLDevice.listDevices(Device.TYPE.GPU).first()
-            }
-            if (OpenCLDevice.listDevices(Device.TYPE.CPU).isNotEmpty()) {
-                return OpenCLDevice.listDevices(Device.TYPE.CPU).first()
-            }
-            return null
+        fun getDefaultDevice(): Device? {
+            return OpenCLDevice.listDevices(Device.TYPE.GPU).firstOrNull() ?: OpenCLDevice.listDevices(Device.TYPE.CPU)
+                .firstOrNull()
         }
-
-        operator fun invoke(
-            firstMatrix: FloatArray,
-            secondMatrix: FloatArray,
-            firstRowCount: Int,
-            firstColumnCount: Int,
-            secondColumnCount: Int,
-            kernelType: KernelType
-        ) = MultiplierBasedOnGPU(
-            getDefaultDevice(),
-            firstMatrix,
-            secondMatrix,
-            firstRowCount,
-            firstColumnCount,
-            secondColumnCount,
-            kernelType
-        )
-
-        operator fun invoke(
-            firstMatrix: FloatArray,
-            secondMatrix: FloatArray,
-            firstRowCount: Int,
-            firstColumnCount: Int,
-            secondColumnCount: Int
-        ) =
-            MultiplierBasedOnGPU(
-                getDefaultDevice(),
-                firstMatrix,
-                secondMatrix,
-                firstRowCount,
-                firstColumnCount,
-                secondColumnCount,
-                KernelType.NAIVE
-            )
     }
 
     init {
         requireNotNull(device) { "No devices available" }
         this.device = device
-        this.firstMatrix = firstMatrix
-        this.secondMatrix = secondMatrix
         this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
-        when (kernelType) {
-            KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptProgram(
+        this.program = when (kernelType) {
+            KernelType.WITH_WPT_OPTIMIZATION -> getWPTOptProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemProgram(
+            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> getLocalMemProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            else -> this.program = getNaiveProgram(
+            else -> getNaiveProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
@@ -100,4 +58,22 @@ class MultiplierBasedOnGPU(
     override fun calculate() {
         program.kernel.execute(program.range)
     }
+}
+
+fun MultiplierBasedOnGPU(
+    firstMatrix: FloatArray,
+    secondMatrix: FloatArray,
+    firstRowCount: Int,
+    firstColumnCount: Int,
+    secondColumnCount: Int
+): MultiplierBasedOnGPU {
+    return MultiplierBasedOnGPU(
+        getDefaultDevice(),
+        firstMatrix,
+        secondMatrix,
+        firstRowCount,
+        firstColumnCount,
+        secondColumnCount,
+        KernelType.NAIVE
+    )
 }
