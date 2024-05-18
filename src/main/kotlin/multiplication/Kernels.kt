@@ -56,12 +56,15 @@ object Kernels {
                 val localRow = getLocalId(1)
 
                 var acc = 0f
-                val numTiles = k / tileSize
-                for (t in 0..numTiles) {
-                    val tiledRow = tileSize * t + localCol
-                    val tiledCol = tileSize * t + localRow
+                val numTiles = k / tileSize + 1
+                var tiledRow: Int
+                var tiledCol: Int
+                var ind: Int
+                for (t in 0 until numTiles) {
+                    tiledRow = 16 * t + localCol
+                    tiledCol = 16 * t + localRow
 
-                    var ind = row * k + tiledRow
+                    ind = row * k + tiledRow
                     tileA[localRow][localCol] = if ((ind < m * k)) a[ind] else 0f
                     ind = tiledCol * n + col
                     tileB[localRow][localCol] = if ((ind < k * n)) b[ind] else 0f
@@ -111,12 +114,17 @@ object Kernels {
                 var acc7 = 0f
                 var acc8 = 0f
 
-                val numTiles = k / tileSize
-                for (t in 0..numTiles) {
+                val numTiles = k / tileSize + 1
+                var tiledRow: Int
+                var tiledCol: Int
+                var ind : Int
+
+
+                for (t in 0 until numTiles) {
                     for (w in 0 until wpt) {
-                        val tiledRow = tileSize * t + localCol
-                        val tiledCol = tileSize * t + localRow
-                        var ind = (row + w * rts) * k + tiledRow
+                        tiledRow = tileSize * t + localCol
+                        tiledCol = tileSize * t + localRow
+                        ind = (row + w * rts) * k + tiledRow
                         tileA[localRow + w * rts][localCol] = if ((ind < m * k)) a[ind] else 0f
                         ind = (tiledCol + w * rts) * n + col
                         tileB[localRow + w * rts][localCol] = if ((ind < k * n)) b[ind] else 0f
