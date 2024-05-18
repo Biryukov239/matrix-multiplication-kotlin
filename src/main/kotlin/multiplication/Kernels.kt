@@ -7,7 +7,7 @@ import org.example.utils.fit
 import org.example.utils.roundUp
 
 object Kernels {
-    fun getNaiveKernel(
+    fun getNaiveKernelAndRange(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?
@@ -37,7 +37,7 @@ object Kernels {
         return Pair(kernel, range)
     }
 
-    fun getLocalMemKernel(
+    fun getLocalMemKernelAndRange(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?
@@ -85,7 +85,7 @@ object Kernels {
         return Pair(kernel, range)
     }
 
-    fun getWPTOptKernel(
+    fun getWPTOptKernelAndRange(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?

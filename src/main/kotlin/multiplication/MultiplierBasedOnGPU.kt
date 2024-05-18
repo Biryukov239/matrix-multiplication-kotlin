@@ -4,9 +4,9 @@ import com.aparapi.Kernel
 import com.aparapi.Range
 import com.aparapi.device.Device
 import com.aparapi.device.OpenCLDevice
-import org.example.multiplication.Kernels.getLocalMemKernel
-import org.example.multiplication.Kernels.getNaiveKernel
-import org.example.multiplication.Kernels.getWPTOptKernel
+import org.example.multiplication.Kernels.getLocalMemKernelAndRange
+import org.example.multiplication.Kernels.getNaiveKernelAndRange
+import org.example.multiplication.Kernels.getWPTOptKernelAndRange
 
 class MultiplierBasedOnGPU(
     device: Device?,
@@ -29,7 +29,7 @@ class MultiplierBasedOnGPU(
         firstColumnCount: Int,
         secondColumnCount: Int
     ) : this(
-        defaultDevice, firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE
+        getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE
     )
 
     constructor(
@@ -40,7 +40,7 @@ class MultiplierBasedOnGPU(
         secondColumnCount: Int,
         kernelType: KernelType?
     ) : this(
-        defaultDevice, firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, kernelType
+        getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, kernelType
     )
 
     init {
@@ -50,17 +50,17 @@ class MultiplierBasedOnGPU(
         this.secondMatrix = secondMatrix!!
         this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
         when (kernelType) {
-            KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptKernel(
+            KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptKernelAndRange(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemKernel(
+            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemKernelAndRange(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            else -> this.program = getNaiveKernel(
+            else -> this.program = getNaiveKernelAndRange(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
@@ -72,15 +72,14 @@ class MultiplierBasedOnGPU(
     }
 
     companion object {
-        private val defaultDevice: Device?
-            get() {
-                if (OpenCLDevice.listDevices(Device.TYPE.GPU).isNotEmpty()) {
-                    return OpenCLDevice.listDevices(Device.TYPE.GPU).first()
-                }
-                if (OpenCLDevice.listDevices(Device.TYPE.CPU).isNotEmpty()) {
-                    return OpenCLDevice.listDevices(Device.TYPE.CPU).first()
-                }
-                return null
+        fun getDefaultDevice(): Device? {
+            if (OpenCLDevice.listDevices(Device.TYPE.GPU).isNotEmpty()) {
+                return OpenCLDevice.listDevices(Device.TYPE.GPU).first()
             }
+            if (OpenCLDevice.listDevices(Device.TYPE.CPU).isNotEmpty()) {
+                return OpenCLDevice.listDevices(Device.TYPE.CPU).first()
+            }
+            return null
+        }
     }
 }
