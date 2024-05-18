@@ -3,7 +3,8 @@ package org.example.multiplication
 import com.aparapi.Kernel
 import com.aparapi.Range
 import com.aparapi.device.Device
-import org.example.utils.Round
+import org.example.utils.fit
+import org.example.utils.roundUp
 
 object Kernels {
     fun getNaiveKernel(
@@ -28,8 +29,8 @@ object Kernels {
         val workgroupSize = 16
         val range = Range.create2D(
             device,
-            Round.fit(n, workgroupSize),
-            Round.fit(m, workgroupSize),
+            fit(n, workgroupSize),
+            fit(m, workgroupSize),
             workgroupSize,
             workgroupSize
         )
@@ -80,7 +81,7 @@ object Kernels {
                 }
             }
         }
-        val range = Range.create2D(device, Round.fit(n, tileSize), Round.fit(m, tileSize), tileSize, tileSize)
+        val range = Range.create2D(device, fit(n, tileSize), fit(m, tileSize), tileSize, tileSize)
         return Pair(kernel, range)
     }
 
@@ -181,8 +182,8 @@ object Kernels {
         }
         val range = Range.create2D(
             device,
-            Round.fit(n, tileSize),
-            Round.roundUp(Round.fit(m, tileSize), wpt),
+            fit(n, tileSize),
+            roundUp(fit(m, tileSize), wpt),
             tileSize,
             tileSize / wpt
         )
