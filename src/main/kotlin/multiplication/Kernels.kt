@@ -7,11 +7,11 @@ import org.example.utils.fit
 import org.example.utils.roundUp
 
 object Kernels {
-    fun getNaiveKernelAndRange(
+    fun getNaiveProgram(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?
-    ): Pair<Kernel, Range> {
+    ): Program {
         val kernel: Kernel = object : Kernel() {
             override fun run() {
                 val col = getGlobalId(0)
@@ -34,14 +34,14 @@ object Kernels {
             workgroupSize,
             workgroupSize
         )
-        return Pair(kernel, range)
+        return Program(kernel, range)
     }
 
-    fun getLocalMemKernelAndRange(
+    fun getLocalMemProgram(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?
-    ): Pair<Kernel, Range> {
+    ): Program {
         val tileSize = 16
         val kernel: Kernel = object : Kernel() {
             @Local
@@ -82,14 +82,14 @@ object Kernels {
             }
         }
         val range = Range.create2D(device, fit(n, tileSize), fit(m, tileSize), tileSize, tileSize)
-        return Pair(kernel, range)
+        return Program(kernel, range)
     }
 
-    fun getWPTOptKernelAndRange(
+    fun getWPTOptProgram(
         a: FloatArray, b: FloatArray, c: FloatArray,
         m: Int, k: Int, n: Int,
         device: Device?
-    ): Pair<Kernel, Range> {
+    ): Program {
         val tileSize = 16
         val wpt = 8
         val rts = tileSize / wpt
@@ -187,6 +187,6 @@ object Kernels {
             tileSize,
             tileSize / wpt
         )
-        return Pair(kernel, range)
+        return Program(kernel, range)
     }
 }

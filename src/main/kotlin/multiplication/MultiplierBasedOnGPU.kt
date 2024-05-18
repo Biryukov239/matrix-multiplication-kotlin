@@ -4,9 +4,11 @@ import com.aparapi.Kernel
 import com.aparapi.Range
 import com.aparapi.device.Device
 import com.aparapi.device.OpenCLDevice
-import org.example.multiplication.Kernels.getLocalMemKernelAndRange
-import org.example.multiplication.Kernels.getNaiveKernelAndRange
-import org.example.multiplication.Kernels.getWPTOptKernelAndRange
+import org.example.multiplication.Kernels.getLocalMemProgram
+import org.example.multiplication.Kernels.getNaiveProgram
+import org.example.multiplication.Kernels.getWPTOptProgram
+
+data class Program(val kernel: Kernel, val range: Range)
 
 class MultiplierBasedOnGPU(
     device: Device?,
@@ -21,7 +23,7 @@ class MultiplierBasedOnGPU(
     override var firstMatrix: FloatArray
     override var secondMatrix: FloatArray
     override var resultMatrix: FloatArray
-    private var program: Pair<Kernel, Range>? = null
+    private var program: Program
 
     private val device: Device
 
@@ -59,17 +61,17 @@ class MultiplierBasedOnGPU(
         this.secondMatrix = secondMatrix
         this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
         when (kernelType) {
-            KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptKernelAndRange(
+            KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemKernelAndRange(
+            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
-            else -> this.program = getNaiveKernelAndRange(
+            else -> this.program = getNaiveProgram(
                 firstMatrix,
                 secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
@@ -77,7 +79,7 @@ class MultiplierBasedOnGPU(
     }
 
     override fun calculate() {
-        program?.first?.execute(program?.second)
+        program.kernel.execute(program.range)
     }
 
     companion object {
