@@ -8,13 +8,13 @@ import org.example.multiplication.Kernels.getLocalMemKernel
 import org.example.multiplication.Kernels.getNaiveKernel
 import org.example.multiplication.Kernels.getWPTOptKernel
 
-class GPUMultiplier (
+class MultiplierBasedOnGPU(
     device: Device?,
-    firstMat: FloatArray?,
-    secondMat: FloatArray?,
-    m: Int,
-    k: Int,
-    n: Int,
+    firstMatrix: FloatArray?,
+    secondMatrix: FloatArray?,
+    firstRowCount: Int,
+    firstColumnCount: Int,
+    secondColumnCount: Int,
     kernelType: KernelType? = KernelType.NAIVE
 ) :
     Multiplier() {
@@ -22,34 +22,47 @@ class GPUMultiplier (
 
     private val device: Device
 
-    constructor(firstMat: FloatArray?, secondMat: FloatArray?, m: Int, k: Int, n: Int) : this(
-        defaultDevice, firstMat, secondMat, m, k, n, KernelType.NAIVE
+    constructor(
+        firstMatrix: FloatArray?,
+        secondMatrix: FloatArray?,
+        firstRowCount: Int,
+        firstColumnCount: Int,
+        secondColumnCount: Int
+    ) : this(
+        defaultDevice, firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE
     )
 
-    constructor(firstMat: FloatArray?, secondMat: FloatArray?, m: Int, k: Int, n: Int, kernelType: KernelType?) : this(
-        defaultDevice, firstMat, secondMat, m, k, n, kernelType
+    constructor(
+        firstMatrix: FloatArray?,
+        secondMatrix: FloatArray?,
+        firstRowCount: Int,
+        firstColumnCount: Int,
+        secondColumnCount: Int,
+        kernelType: KernelType?
+    ) : this(
+        defaultDevice, firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, kernelType
     )
 
     init {
         requireNotNull(device) { "No devices available" }
         this.device = device
-        this.firstMat = firstMat!!
-        this.secondMat = secondMat!!
-        this.resultMat = FloatArray(m * n)
+        this.firstMatrix = firstMatrix!!
+        this.secondMatrix = secondMatrix!!
+        this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
         when (kernelType) {
             KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptKernel(
-                firstMat,
-                secondMat, resultMat, m, k, n, device
+                firstMatrix,
+                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
             KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> this.program = getLocalMemKernel(
-                firstMat,
-                secondMat, resultMat, m, k, n, device
+                firstMatrix,
+                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
 
             else -> this.program = getNaiveKernel(
-                firstMat,
-                secondMat, resultMat, m, k, n, device
+                firstMatrix,
+                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
             )
         }
     }
