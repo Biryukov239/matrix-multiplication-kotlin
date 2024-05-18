@@ -55,8 +55,22 @@ class MultiplierBasedOnGPU(
             kernelType
         )
 
-        operator fun invoke(firstMatrix: FloatArray, secondMatrix: FloatArray, firstRowCount: Int, firstColumnCount: Int, secondColumnCount: Int) =
-            MultiplierBasedOnGPU(getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE)
+        operator fun invoke(
+            firstMatrix: FloatArray,
+            secondMatrix: FloatArray,
+            firstRowCount: Int,
+            firstColumnCount: Int,
+            secondColumnCount: Int
+        ) =
+            MultiplierBasedOnGPU(
+                getDefaultDevice(),
+                firstMatrix,
+                secondMatrix,
+                firstRowCount,
+                firstColumnCount,
+                secondColumnCount,
+                KernelType.NAIVE
+            )
     }
 
     init {
