@@ -18,6 +18,9 @@ class MultiplierBasedOnGPU(
     kernelType: KernelType? = KernelType.NAIVE
 ) :
     Multiplier() {
+    override var firstMatrix: FloatArray
+    override var secondMatrix: FloatArray
+    override var resultMatrix: FloatArray
     private var program: Pair<Kernel, Range>? = null
 
     private val device: Device

@@ -1,17 +1,17 @@
 package org.example.multiplication
 
-class MultiplierBasedOnCPU(firstMatrix: FloatArray?, secondMatrix: FloatArray?, firstRowCount: Int, firstColumnCount: Int, secondColumnCount: Int) :
-    Multiplier() {
-    private val firstRowCount: Int
+class MultiplierBasedOnCPU(
+    firstMatrix: FloatArray?,
+    secondMatrix: FloatArray?,
+    private val firstRowCount: Int,
+    firstColumnCount: Int,
     private val secondColumnCount: Int
+) :
+    Multiplier() {
 
-    init {
-        this.firstMatrix = firstMatrix!!
-        this.secondMatrix = secondMatrix!!
-        this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
-        this.firstRowCount = firstRowCount
-        this.secondColumnCount = secondColumnCount
-    }
+    override var firstMatrix: FloatArray = firstMatrix!!
+    override var secondMatrix: FloatArray = secondMatrix!!
+    override var resultMatrix: FloatArray = FloatArray(firstRowCount * secondColumnCount)
 
     private val transposedMat: FloatArray
         get() {
