@@ -27,32 +27,37 @@ class MultiplierBasedOnGPU(
 
     private val device: Device
 
-    constructor(
-        firstMatrix: FloatArray,
-        secondMatrix: FloatArray,
-        firstRowCount: Int,
-        firstColumnCount: Int,
-        secondColumnCount: Int
-    ) : this(
-        getDefaultDevice(),
-        firstMatrix,
-        secondMatrix,
-        firstRowCount,
-        firstColumnCount,
-        secondColumnCount,
-        KernelType.NAIVE
-    )
+    companion object {
+        private fun getDefaultDevice(): Device? {
+            if (OpenCLDevice.listDevices(Device.TYPE.GPU).isNotEmpty()) {
+                return OpenCLDevice.listDevices(Device.TYPE.GPU).first()
+            }
+            if (OpenCLDevice.listDevices(Device.TYPE.CPU).isNotEmpty()) {
+                return OpenCLDevice.listDevices(Device.TYPE.CPU).first()
+            }
+            return null
+        }
 
-    constructor(
-        firstMatrix: FloatArray,
-        secondMatrix: FloatArray,
-        firstRowCount: Int,
-        firstColumnCount: Int,
-        secondColumnCount: Int,
-        kernelType: KernelType?
-    ) : this(
-        getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, kernelType
-    )
+        operator fun invoke(
+            firstMatrix: FloatArray,
+            secondMatrix: FloatArray,
+            firstRowCount: Int,
+            firstColumnCount: Int,
+            secondColumnCount: Int,
+            kernelType: KernelType
+        ) = MultiplierBasedOnGPU(
+            getDefaultDevice(),
+            firstMatrix,
+            secondMatrix,
+            firstRowCount,
+            firstColumnCount,
+            secondColumnCount,
+            kernelType
+        )
+
+        operator fun invoke(firstMatrix: FloatArray, secondMatrix: FloatArray, firstRowCount: Int, firstColumnCount: Int, secondColumnCount: Int) =
+            MultiplierBasedOnGPU(getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE)
+    }
 
     init {
         requireNotNull(device) { "No devices available" }
@@ -80,17 +85,5 @@ class MultiplierBasedOnGPU(
 
     override fun calculate() {
         program.kernel.execute(program.range)
-    }
-
-    companion object {
-        fun getDefaultDevice(): Device? {
-            if (OpenCLDevice.listDevices(Device.TYPE.GPU).isNotEmpty()) {
-                return OpenCLDevice.listDevices(Device.TYPE.GPU).first()
-            }
-            if (OpenCLDevice.listDevices(Device.TYPE.CPU).isNotEmpty()) {
-                return OpenCLDevice.listDevices(Device.TYPE.CPU).first()
-            }
-            return null
-        }
     }
 }
