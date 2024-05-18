@@ -1,4 +1,5 @@
 package org.example.utils
+
 /**
  * rounds up division first by second
  * @param first the Int number

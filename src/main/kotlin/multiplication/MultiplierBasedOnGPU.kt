@@ -10,8 +10,8 @@ import org.example.multiplication.Kernels.getWPTOptKernelAndRange
 
 class MultiplierBasedOnGPU(
     device: Device?,
-    firstMatrix: FloatArray?,
-    secondMatrix: FloatArray?,
+    firstMatrix: FloatArray,
+    secondMatrix: FloatArray,
     firstRowCount: Int,
     firstColumnCount: Int,
     secondColumnCount: Int,
@@ -26,18 +26,24 @@ class MultiplierBasedOnGPU(
     private val device: Device
 
     constructor(
-        firstMatrix: FloatArray?,
-        secondMatrix: FloatArray?,
+        firstMatrix: FloatArray,
+        secondMatrix: FloatArray,
         firstRowCount: Int,
         firstColumnCount: Int,
         secondColumnCount: Int
     ) : this(
-        getDefaultDevice(), firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount, KernelType.NAIVE
+        getDefaultDevice(),
+        firstMatrix,
+        secondMatrix,
+        firstRowCount,
+        firstColumnCount,
+        secondColumnCount,
+        KernelType.NAIVE
     )
 
     constructor(
-        firstMatrix: FloatArray?,
-        secondMatrix: FloatArray?,
+        firstMatrix: FloatArray,
+        secondMatrix: FloatArray,
         firstRowCount: Int,
         firstColumnCount: Int,
         secondColumnCount: Int,
@@ -49,8 +55,8 @@ class MultiplierBasedOnGPU(
     init {
         requireNotNull(device) { "No devices available" }
         this.device = device
-        this.firstMatrix = firstMatrix!!
-        this.secondMatrix = secondMatrix!!
+        this.firstMatrix = firstMatrix
+        this.secondMatrix = secondMatrix
         this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
         when (kernelType) {
             KernelType.WITH_WPT_OPTIMIZATION -> this.program = getWPTOptKernelAndRange(

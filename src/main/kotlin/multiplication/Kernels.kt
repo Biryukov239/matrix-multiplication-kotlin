@@ -118,7 +118,7 @@ object Kernels {
                 val numTiles = k / tileSize + 1
                 var tiledRow: Int
                 var tiledCol: Int
-                var ind : Int
+                var ind: Int
 
 
                 for (t in 0 until numTiles) {
