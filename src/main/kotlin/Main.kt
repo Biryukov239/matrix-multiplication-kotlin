@@ -5,6 +5,8 @@ import org.example.multiplication.MultiplierBasedOnGPU
 import org.example.multiplication.Multiplier
 import kotlin.math.abs
 import com.xenomachina.argparser.ArgParser
+import org.example.multiplication.KernelType
+import kotlin.system.exitProcess
 
 
 class MyArgs(parser: ArgParser) {
@@ -24,9 +26,29 @@ fun main(args: Array<String>) {
         println("Values after -f: $firstMatrixInput")
         println("Values after -s: $secondMatrixInput")
         val firstMatrix = firstMatrixInput.split(",").map { it.toFloat() }.toFloatArray()
+        if (firstMatrix.size != firstRowCount * firstColumnCount) {
+            System.err.println(
+                "Invalid size of first matrix, expected: " +
+                        firstRowCount * firstColumnCount + " float(s), not " + firstMatrix.size
+            )
+            exitProcess(2)
+        }
         val secondMatrix = secondMatrixInput.split(",").map { it.toFloat() }.toFloatArray()
-        val multiplierBasedOnGPU =
-            MultiplierBasedOnGPU(firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount)
+        if (secondMatrix.size != firstColumnCount * secondColumnCount) {
+            System.err.println(
+                "Invalid size of second matrix, expected: " +
+                        firstColumnCount * firstRowCount + " float(s), not" + secondMatrix.size
+            )
+            exitProcess(2)
+        }
+        val multiplierBasedOnGPU = MultiplierBasedOnGPU(
+            firstMatrix,
+            secondMatrix,
+            firstRowCount,
+            firstColumnCount,
+            secondColumnCount,
+            KernelType.WITH_WPT_OPTIMIZATION
+        )
         multiplierBasedOnGPU.calculate()
         val multiplierBasedOnCPU: Multiplier =
             MultiplierBasedOnCPU(firstMatrix, secondMatrix, firstRowCount, firstColumnCount, secondColumnCount)

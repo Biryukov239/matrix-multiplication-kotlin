@@ -4,20 +4,19 @@ class MultiplierBasedOnCPU(
     override val firstMatrix: FloatArray,
     override val secondMatrix: FloatArray,
     private val firstRowCount: Int,
-    firstColumnCount: Int,
+    private val firstColumnCount: Int,
     private val secondColumnCount: Int
 ) :
     Multiplier {
 
-    override var resultMatrix: FloatArray = FloatArray(firstRowCount * secondColumnCount)
+    override val resultMatrix: FloatArray = FloatArray(firstRowCount * secondColumnCount)
 
     private val transposedMat: FloatArray
         get() {
-            val k = secondMatrix.size / secondColumnCount
             val res = FloatArray(secondMatrix.size)
-            for (i in 0 until k) {
+            for (i in 0 until firstColumnCount) {
                 for (j in 0 until secondColumnCount) {
-                    res[j * k + i] = secondMatrix[i * secondColumnCount + j]
+                    res[j * firstColumnCount + i] = secondMatrix[i * secondColumnCount + j]
                 }
             }
             return res

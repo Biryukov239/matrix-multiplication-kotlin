@@ -13,16 +13,16 @@ data class Program(val kernel: Kernel, val range: Range)
 
 class MultiplierBasedOnGPU(
     device: Device?,
-    override var firstMatrix: FloatArray,
-    override var secondMatrix: FloatArray,
+    override val firstMatrix: FloatArray,
+    override val secondMatrix: FloatArray,
     firstRowCount: Int,
     firstColumnCount: Int,
     secondColumnCount: Int,
     kernelType: KernelType = KernelType.NAIVE,
 ) :
     Multiplier {
-    override var resultMatrix: FloatArray
-    private var program: Program
+    override val resultMatrix: FloatArray
+    private val program: Program
 
     private val device: Device
 
@@ -75,5 +75,24 @@ fun MultiplierBasedOnGPU(
         firstColumnCount,
         secondColumnCount,
         KernelType.NAIVE
+    )
+}
+
+fun MultiplierBasedOnGPU(
+    firstMatrix: FloatArray,
+    secondMatrix: FloatArray,
+    firstRowCount: Int,
+    firstColumnCount: Int,
+    secondColumnCount: Int,
+    kernelType: KernelType
+): MultiplierBasedOnGPU {
+    return MultiplierBasedOnGPU(
+        getDefaultDevice(),
+        firstMatrix,
+        secondMatrix,
+        firstRowCount,
+        firstColumnCount,
+        secondColumnCount,
+        kernelType
     )
 }
