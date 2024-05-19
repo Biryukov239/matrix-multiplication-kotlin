@@ -28,16 +28,14 @@ fun main(args: Array<String>) {
         val firstMatrix = firstMatrixInput.split(",").map { it.toFloat() }.toFloatArray()
         if (firstMatrix.size != firstRowCount * firstColumnCount) {
             System.err.println(
-                "Invalid size of first matrix, expected: " +
-                        firstRowCount * firstColumnCount + " float(s), not " + firstMatrix.size
+                "Invalid size of first matrix, expected: ${firstRowCount * firstColumnCount} float(s), not ${firstMatrix.size}"
             )
             exitProcess(2)
         }
         val secondMatrix = secondMatrixInput.split(",").map { it.toFloat() }.toFloatArray()
         if (secondMatrix.size != firstColumnCount * secondColumnCount) {
             System.err.println(
-                "Invalid size of second matrix, expected: " +
-                        firstColumnCount * firstRowCount + " float(s), not" + secondMatrix.size
+                "Invalid size of second matrix, expected: ${firstColumnCount * secondColumnCount} float(s), not ${secondMatrix.size}"
             )
             exitProcess(2)
         }

@@ -145,37 +145,37 @@ object Kernels {
                     localBarrier()
                 }
                 if (col < n) {
-                    var ind = (row + 0 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc1
+                    var index = (row + 0 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc1
                     }
-                    ind = (row + 1 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc2
+                    index = (row + 1 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc2
                     }
-                    ind = (row + 2 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc3
+                    index = (row + 2 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc3
                     }
-                    ind = (row + 3 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc4
+                    index = (row + 3 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc4
                     }
-                    ind = (row + 4 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc5
+                    index = (row + 4 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc5
                     }
-                    ind = (row + 5 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc6
+                    index = (row + 5 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc6
                     }
-                    ind = (row + 6 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc7
+                    index = (row + 6 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc7
                     }
-                    ind = (row + 7 * rts) * n + col
-                    if ((ind - col) / n < m) {
-                        c[ind] = acc8
+                    index = (row + 7 * rts) * n + col
+                    if ((index - col) / n < m) {
+                        c[index] = acc8
                     }
                 }
             }

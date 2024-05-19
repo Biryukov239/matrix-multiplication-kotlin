@@ -19,39 +19,30 @@ class MultiplierBasedOnGPU(
     firstColumnCount: Int,
     secondColumnCount: Int,
     kernelType: KernelType = KernelType.NAIVE,
+    override val resultMatrix: FloatArray = FloatArray(firstRowCount * secondColumnCount),
+    private val program: Program = when (kernelType) {
+        KernelType.WITH_WPT_OPTIMIZATION -> getWPTOptProgram(
+            firstMatrix,
+            secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
+        )
+
+        KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> getLocalMemProgram(
+            firstMatrix,
+            secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
+        )
+
+        else -> getNaiveProgram(
+            firstMatrix,
+            secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
+        )
+    }
 ) :
     Multiplier {
-    override val resultMatrix: FloatArray
-    private val program: Program
-
-    private val device: Device
 
     companion object {
         fun getDefaultDevice(): Device? {
             return OpenCLDevice.listDevices(Device.TYPE.GPU).firstOrNull() ?: OpenCLDevice.listDevices(Device.TYPE.CPU)
                 .firstOrNull()
-        }
-    }
-
-    init {
-        requireNotNull(device) { "No devices available" }
-        this.device = device
-        this.resultMatrix = FloatArray(firstRowCount * secondColumnCount)
-        this.program = when (kernelType) {
-            KernelType.WITH_WPT_OPTIMIZATION -> getWPTOptProgram(
-                firstMatrix,
-                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
-            )
-
-            KernelType.WITH_LOCAL_MEM_OPTIMIZATION -> getLocalMemProgram(
-                firstMatrix,
-                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
-            )
-
-            else -> getNaiveProgram(
-                firstMatrix,
-                secondMatrix, resultMatrix, firstRowCount, firstColumnCount, secondColumnCount, device
-            )
         }
     }
 
